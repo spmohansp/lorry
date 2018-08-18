@@ -10,7 +10,7 @@ use Validator;
 class vehicleController extends Controller
 {
 
-// ADD VEHICLE 
+// ADD VEHICLE  
     public function addVehicle(Request $request){
     	$validator = Validator::make($request->all(), [ 
             'modelNumber' => 'required', 
