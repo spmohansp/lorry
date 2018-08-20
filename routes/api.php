@@ -29,7 +29,12 @@ Route::group(['middleware' => 'auth:api'], function(){
 
 // VEHICLES
 	Route::post('addVehicle', 'vehicleController@addVehicle');
+	Route::get('vehicle', 'vehicleController@getVehicle');
+	Route::get('vehicle/{id}/edit', 'vehicleController@editVehicle');
+	Route::post('vehicle/{id}/update', 'vehicleController@updateVehicle');
+	Route::delete('vehicle/{id}/delete', 'vehicleController@deleteVehicle');
 
+// ENTRY MODULE
 
 
 });
