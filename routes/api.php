@@ -34,7 +34,20 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('vehicle/{id}/update', 'vehicleController@updateVehicle');
 	Route::delete('vehicle/{id}/delete', 'vehicleController@deleteVehicle');
 
-// ENTRY MODULE
+// ENTRY MODULE 
+	Route::get('passEntryData', 'entryController@entryPassData');
+	Route::post('addEntry', 'entryController@addEntry');
+	Route::get('entry', 'entryController@getEntry');
+	Route::get('entry/{id}/edit', 'entryController@editEntry');
+	Route::post('entry/{id}/update', 'entryController@updateEntry');
+	Route::delete('entry/{id}/delete', 'entryController@deleteEntry');
+
+
+
+
+
+
+
 
 
 });
