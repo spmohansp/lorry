@@ -17,22 +17,26 @@ class entryController extends Controller
 // PASS ENTRY DATA
     public function entryPassData(Request $request){
     	$user = Auth::user(); 
+         $locationData=array();
+         $loadType=array();
 	 // Location 
     	$entryTable = entry::select('locationFrom as location','locationTo','loadType')->where('userId',$user['id'])->get();
-    	foreach ($entryTable as $key => $value) {
-    		$locationData[]=$value['location'];
-    		$locationData[]=$value['locationTo'];
-    		$loadType[]=$value['loadType'];
-    	}
-    	 $finalData['location'] = array_unique($locationData);  //LOCATION DATA
-    	 $finalData['loadType'] = array_unique($loadType); // LOAD TYPE
+        if (!empty($entryTable)) {
+        	foreach ($entryTable as $key => $value) {
+        		$locationData[]=$value['location'];
+        		$locationData[]=$value['locationTo'];
+        		$loadType[]=$value['loadType'];
+        	}
+        	 $finalData['locations'] = array_unique($locationData);  //LOCATION DATA
+        	 $finalData['loadTypes'] = array_unique($loadType); // LOAD TYPE
+        }
 	 // Staff 
     	$staff = staff::select('id','name','type')->where('userId',$user['id'])->get();
     	foreach ($staff as $key => $value) {
-    		$finalData['staff'][$value['type']][]=$value;
+    		$finalData['staffs'][$value['type']][]=$value;
     	}
-    	$finalData['vehicle'] = vehicle::select("id","modelNumber","vehicleNumber")->where('userId',$user['id'])->get();
-    	$finalData['client'] = client::select('id','name')->where('userId',$user['id'])->get();
+    	$finalData['vehicles'] = vehicle::select("id","modelNumber","vehicleNumber")->where('userId',$user['id'])->get();
+    	$finalData['clients'] = client::select('id','name')->where('userId',$user['id'])->get();
     	return response()->json(['success',$finalData], $this-> successStatus);
     }
 

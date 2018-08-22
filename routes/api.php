@@ -1,9 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-Route::get('/', function(){
-	return "Po Da Dai";
-});
 Route::post('login', 'UserController@login');
 Route::post('register', 'UserController@register');
 Route::post('validateLogin', 'UserController@validateLogin');
