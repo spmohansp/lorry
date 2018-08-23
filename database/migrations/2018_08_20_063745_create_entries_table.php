@@ -17,13 +17,13 @@ class CreateEntriesTable extends Migration
             $table->increments('id');
             $table->string('dateFrom');
             $table->string('dateTo');
-            $table->integer('vehicleId')->unsigned();
-            $table->foreign('vehicleId')->references('id')->on('vehicles');
             $table->integer('clientId')->unsigned();
             $table->foreign('clientId')->references('id')->on('clients');
+            $table->integer('vehicleId')->unsigned();
+            $table->foreign('vehicleId')->references('id')->on('vehicles');
             $table->integer('cleanerId')->unsigned()->nullable();
             $table->foreign('cleanerId')->references('id')->on('staff');
-            $table->integer('driverId')->unsigned();
+            $table->integer('driverId')->unsigned()->nullable();
             $table->foreign('driverId')->references('id')->on('staff');
             $table->integer('managerId')->unsigned()->nullable();
             $table->foreign('managerId')->references('id')->on('staff');

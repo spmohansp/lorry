@@ -43,11 +43,12 @@ class entryController extends Controller
 // ADD ENTRY
     public function addEntry(Request $request){
     	$validator = Validator::make($request->all(), [ 
-            'dateFrom' => 'required', 
-            'dateTo' => 'required', 
+            'dateFrom' => 'required|date', 
+            'dateTo' => 'required|date', 
             'vehicleId' => 'required|exists:vehicles,id', 
             'clientId' => 'required|exists:clients,id', 
-            'driverId' => 'required|exists:staff,id', 
+            'driverId' => 'required_without:cleanerId|exists:staff,id',
+            'cleanerId' => 'required_without:driverId|exists:staff,id', 
             'startKm' => 'required', 
             'endKm' => 'required', 
             'total' => 'required', 
@@ -81,11 +82,12 @@ class entryController extends Controller
 // UPDATE ENTRY
     public function updateEntry(Request $request,$id){
     	$validator = Validator::make($request->all(), [ 
-            'dateFrom' => 'required', 
-            'dateTo' => 'required', 
+            'dateFrom' => 'required|date', 
+            'dateTo' => 'required|date', 
             'vehicleId' => 'required|exists:vehicles,id', 
             'clientId' => 'required|exists:clients,id', 
-            'driverId' => 'required|exists:staff,id', 
+            'driverId' => 'required_without:cleanerId|exists:staff,id',
+            'cleanerId' => 'required_without:driverId|exists:staff,id',
             'startKm' => 'required', 
             'endKm' => 'required', 
             'total' => 'required', 

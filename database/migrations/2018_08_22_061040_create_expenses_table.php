@@ -16,12 +16,12 @@ class CreateExpensesTable extends Migration
         Schema::create('expenses', function (Blueprint $table) {
             $table->increments('id');
             $table->string('date');
-            $table->integer('vehicleId')->unsigned();
+            $table->string('expenseType');
+            $table->integer('vehicleId')->unsigned()->nullable();
             $table->foreign('vehicleId')->references('id')->on('vehicles');
-
+            $table->string('quantity')->nullable();
             $table->integer('staffId')->unsigned()->nullable();
             $table->foreign('staffId')->references('id')->on('staff');
-            $table->string('quantity')->nullable();
             $table->string('amount');
             $table->string('discription')->nullable();
             $table->integer('userId')->unsigned();

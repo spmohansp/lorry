@@ -39,6 +39,18 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('entry/{id}/update', 'entryController@updateEntry');
 	Route::delete('entry/{id}/delete', 'entryController@deleteEntry');
 
+// EXPENSE MODULE
+	Route::get('passExpenseData', 'expenseController@expensePassData');
+	Route::post('AddExpense', 'expenseController@AddExpense');
+	Route::get('expense', 'expenseController@getExpense');
+	Route::get('expense/{id}/edit', 'expenseController@editExpense');
+	Route::post('expense/{id}/update', 'expenseController@updateExpense');
+	Route::delete('expense/{id}/delete', 'expenseController@deleteExpense');
+
+
+
+
+
 
 
 
