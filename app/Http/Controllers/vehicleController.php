@@ -46,7 +46,25 @@ class vehicleController extends Controller
 
 // UPDATE VEHICLE
 	public function updateVehicle(Request $request,$id){
-		return $request;
+        $validator = Validator::make($request->all(), [ 
+            'modelNumber' => 'required', 
+            'vehicleNumber' => 'required', 
+            'ownerName' => 'required', 
+            'documents' => 'required', 
+        ]);
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
+        $data = vehicle::findOrfail($id);
+        $data ->modelNumber =  request('modelNumber');
+        $data ->vehicleNumber =  request('vehicleNumber');
+        $data ->ownerName =  request('ownerName');
+        $data ->documents =  serialize(request('documents'));
+        if ($data->save()) {
+            return response()->json(['success','Vehicle Updated Sucessfully'], $this-> successStatus); 
+        }else{
+            return response()->json(['error'], $this-> successStatus); 
+        }
 	}
 
 // DELETE VEHICLE

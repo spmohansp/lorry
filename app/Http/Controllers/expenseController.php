@@ -76,7 +76,7 @@ class expenseController extends Controller
     	 $data ->staffId =  request('staffId');
     	 $data ->amount =  request('amount');
     	 $data ->discription =  request('discription');
-    	 if ($data->save()) {
+    	if ($data->save()) {
     		return response()->json(['success','Expense Updated Sucessfully'], $this-> successStatus); 
     	}else{
     		return response()->json(['error'], $this-> successStatus); 
