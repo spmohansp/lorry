@@ -47,6 +47,8 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('expense/{id}/update', 'expenseController@updateExpense');
 	Route::delete('expense/{id}/delete', 'expenseController@deleteExpense');
 
+// INCOME MODULES
+	Route::get('clientIncome/{id}/show', 'balanceController@ClientIncomeBalance');
 
 
 
