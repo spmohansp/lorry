@@ -48,10 +48,9 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::delete('expense/{id}/delete', 'expenseController@deleteExpense');
 
 // INCOME MODULES
-	Route::get('clientIncome/{id}/show', 'balanceController@ClientIncomeBalance');
-
-
-
+	Route::get('clientIncome/{id}/showBalance', 'balanceController@ClientIncomeBalance');
+// Client Income
+	Route::post('clientIncome/{id}/addClientIncome', 'clientIncomeController@addClientIncome');
 
 
 

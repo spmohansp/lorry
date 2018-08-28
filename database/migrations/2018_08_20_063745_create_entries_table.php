@@ -39,7 +39,7 @@ class CreateEntriesTable extends Migration
             $table->string('upLift')->nullable();
             $table->string('downLift')->nullable();
             $table->string('advance')->nullable();
-            $table->string('balance')->nullable();
+            $table->bigInteger('balance')->nullable();
             $table->integer('userId')->unsigned();
             $table->foreign('userId')->references('id')->on('users');
             $table->timestamps();

@@ -15,6 +15,7 @@ class balanceController extends Controller
 {
      public function ClientIncomeBalance(Request $request,$id){
     	$user = Auth::user(); 
+        $balanceDatas=array();
     	$entryBalanceData =entry::groupBy('vehicleId')->selectRaw('vehicleId, sum(balance) as balance')->where('userId',$user['id'])->Where('clientId', $id)->get();
     	// return $entryBalance = DB::table('entries')->where('userId',$user['id'])->Where('clientId', $id)->select('vehicleId',DB::raw('SUM(balance) as balanceAmount'))->groupBy('vehicleId')->get();   
     	foreach ($entryBalanceData as $key => $value) {
