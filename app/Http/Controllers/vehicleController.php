@@ -41,7 +41,7 @@ class vehicleController extends Controller
 // VIEW INDIVIDUAL VEHICLE
     public function editVehicle(vehicle $id){
     	vehicle::findOrfail($id);
-    	return $id;
+    	return response()->json(['success',$id], $this-> successStatus); 
     }
 
 // UPDATE VEHICLE

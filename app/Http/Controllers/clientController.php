@@ -36,7 +36,7 @@ class clientController extends Controller
 // GET SINGLE CLIENT FOR EDIT
     public function editClient(client $id){
     	client::findOrfail($id);
-    	return $id;
+    	return response()->json(['success',$id], $this-> successStatus); 
     }
 
 // UPDATE CLIENT DETAIL

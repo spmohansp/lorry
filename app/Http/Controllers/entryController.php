@@ -59,7 +59,7 @@ class entryController extends Controller
             'balance' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['error',$validator->errors()], 401);            
         }
         $data=$request->all();
         $user = Auth::user(); 
@@ -76,7 +76,7 @@ class entryController extends Controller
 
 // EDIT ENTRY 
     public function editEntry(entry $id){
-	    	return $id;
+        return response()->json(['success',$id], $this-> successStatus); 
     }
 
 // UPDATE ENTRY
@@ -98,7 +98,7 @@ class entryController extends Controller
             'balance' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['error',$validator->errors()], 401);            
         }
         $data = entry::findOrfail($id);
         $data ->dateFrom =  request('dateFrom');

@@ -52,7 +52,8 @@ class expenseController extends Controller
 
 // GET 1 EXPENSE DATA
     public function editExpense(expense $id){
-    	return $id;
+        return response()->json(['success',$id], $this-> successStatus); 
+        
     }
 
 // UPDATE EXPENSE DATA

@@ -51,9 +51,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::get('clientIncome/{id}/showBalance', 'balanceController@ClientIncomeBalance');
 // Client Income
 	Route::post('clientIncome/{id}/addClientIncome', 'clientIncomeController@addClientIncome');
-
-
-
+	Route::get('clientIncome', 'clientIncomeController@getAllIncome');
 
 
 

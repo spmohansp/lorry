@@ -20,10 +20,13 @@ class clientIncomeController extends Controller
             'discountAmount' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['message'][]=$value[0];
+            }
+            return response()->json(['error',$errData], 401);            
         }
         return $request->all();
-        $user = Auth::user(); 
-        $data['userId']=$user['id'];
+        // $user = Auth::user(); 
+        // $data['userId']=$user['id'];
     }
 }

@@ -19,7 +19,10 @@ class UserController extends Controller
             'address' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['message'][]=$value[0];
+            }
+            return response()->json(['error',$errData], 401);            
         }
 		$input = $request->all(); 
 		$user = User::create($input); 
@@ -34,7 +37,10 @@ class UserController extends Controller
             'mobile' => 'required|min:10|max:10', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['message'][]=$value[0];
+            }
+            return response()->json(['error',$errData], 401);            
         }
 		// $success['otp'] = rand(1000, 9999);  //generate random otp number
 		 $success['otp']=1234;
@@ -47,6 +53,16 @@ class UserController extends Controller
 
 // VALIDATE OTP
 	public function validateLogin(Request $request) {
+		$validator = Validator::make($request->all(), [ 
+            'mobile' => 'required|min:10|max:10', 
+            'otp' => 'required', 
+        ]);
+		if ($validator->fails()) { 
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['message'][]=$value[0];
+            }
+            return response()->json(['error',$errData], 401);            
+        }
 		$otpData = verifyOtp::where('mobile',request('mobile'))->latest()->first();
 		if ($otpData['otp']==request('otp')) {
 			$userData= user::where('mobile',request('mobile'))->first();
@@ -62,7 +78,8 @@ class UserController extends Controller
 				return response()->json(['success'=>$success], $this-> successStatus); 
 			}
 		}else{
-			return response()->json(['error'=>'Enter Valid OTP'], 401); 
+			$error['message']='Enter Valid OTP';
+			return response()->json(['error'=>$error], 401); 
 		}
 	}
 
@@ -70,9 +87,11 @@ class UserController extends Controller
 	public function logout(Request $request){
 		if (Auth::check()) {
 	        Auth::user()->token()->revoke();
-	        return response()->json(['success' =>'logout_success'],200); 
+	        $success['message']='Logout Success';
+	        return response()->json(['success' =>$success],200); 
 	    }else{
-	        return response()->json(['error' =>'api.something_went_wrong'], 500);
+	    	$error['message']='api.something_went_wrong';
+	        return response()->json(['error' =>$error], 500);
 	    }
 
 	}

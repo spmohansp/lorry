@@ -38,7 +38,7 @@ class staffController extends Controller{
 // VIEW INDIVIDUAL STAFF
     public function editStaff(staff $id){
     	staff::findOrfail($id);
-    	return $id;
+    	return response()->json(['success',$id], $this-> successStatus); 
     }
 
 // UPDATE STAFF
