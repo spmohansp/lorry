@@ -41,16 +41,19 @@ class UserController extends Controller
         ]);
 		if ($validator->fails()) { 
             foreach ($validator->errors()->toArray() as $value) {
-                $errData['message'][]=$value[0];
+               	$errData['status']='error';
+                $errData['message']=$value[0];
+            	return response()->json($errData);            
             }
-            return response()->json(['error',$errData], 401);            
         }
 		// $success['otp'] = rand(1000, 9999);  //generate random otp number
-		 $success['otp']=1234;
-		 $success['mobile']=request('mobile');
-		 $finalData['mobile']=request('mobile');
-		 verifyOtp::create($success); 
-		return response()->json(['success' => $success], $this-> successStatus); 
+		$success['status']='success';
+		$success['mobile']=request('mobile');
+		$success['otp']=1234;
+		$finalData['status']='success';
+		$finalData['mobile']=request('mobile');
+		verifyOtp::create($success); 
+		return response()->json( $success, $this-> successStatus); 
 		// return response()->json(['success' => $finalData], $this-> successStatus); 
 	}
 
@@ -62,27 +65,32 @@ class UserController extends Controller
         ]);
 		if ($validator->fails()) { 
             foreach ($validator->errors()->toArray() as $value) {
-                $errData['message'][]=$value[0];
+               	$errData['status']='error';
+                $errData['message']=$value[0];
+            	return response()->json($errData);            
             }
-            return response()->json(['error',$errData], 401);            
         }
+
 		$otpData = verifyOtp::where('mobile',request('mobile'))->latest()->first();
 		if ($otpData['otp']==request('otp')) {
 			$userData= user::where('mobile',request('mobile'))->first();
 			if (!empty($userData)) {
+				$success['status']='success';
 				$success['token']=$userData->createToken('Mohan')-> accessToken; 
 				$success['transportName'] =  $userData->transportName;
 				verifyOtp::where('mobile',request('mobile'))->latest()->first()->delete();
-				return response()->json(['success' => $success], $this-> successStatus);
+				return response()->json($success, $this-> successStatus);
 			}else{
-				$success['status']="User Not Register Yet";
+				$success['status']='success';
+				$success['message']="User Not Register Yet";
 				$success['mobile']=request('mobile');
 				verifyOtp::where('mobile',request('mobile'))->latest()->first()->delete();
-				return response()->json(['success'=>$success], $this-> successStatus); 
+				return response()->json($success, $this-> successStatus); 
 			}
 		}else{
+			$error['status']='success';
 			$error['message']='Enter Valid OTP';
-			return response()->json(['error'=>$error], 401); 
+			return response()->json($error); 
 		}
 	}
 
@@ -90,11 +98,12 @@ class UserController extends Controller
 	public function logout(Request $request){
 		if (Auth::check()) {
 	        Auth::user()->token()->revoke();
+	        $success['status']='success';
 	        $success['message']='Logout Success';
-	        return response()->json(['success' =>$success],200); 
+	        return response()->json($success,200); 
 	    }else{
 	    	$error['message']='api.something_went_wrong';
-	        return response()->json(['error' =>$error], 500);
+	        return response()->json($error, 500);
 	    }
 
 	}
