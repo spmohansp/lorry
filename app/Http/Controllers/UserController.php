@@ -21,15 +21,17 @@ class UserController extends Controller
 		if ($validator->fails()) { 
             foreach ($validator->errors()->toArray() as $value) {
                 // $errData['message'][]=$value[0];
+                $errData['status']='error';
                 $errData['message']=$value[0];
-            return response()->json(['error',$errData], 401);            
+            	return response()->json($errData);            
             }
         }
 		$input = $request->all(); 
 		$user = User::create($input); 
+		$success['status']='success';
 		$success['token'] =  $user->createToken('Mohan')-> accessToken; 
 		$success['transportName'] =  $user->transportName;
-		return response()->json(['success'=>$success], $this-> successStatus); 
+		return response()->json($success, $this-> successStatus); 
     }
 
 // LOGIN USER
