@@ -14,15 +14,16 @@ class UserController extends Controller
 // REGISTER USER
 	public function register(Request $request) { 
         $validator = Validator::make($request->all(), [ 
-            'transportName' => 'required', 
             'mobile' => 'required|unique:users|min:10|max:10', 
+            'transportName' => 'required', 
             'address' => 'required', 
         ]);
 		if ($validator->fails()) { 
             foreach ($validator->errors()->toArray() as $value) {
-                $errData['message'][]=$value[0];
-            }
+                // $errData['message'][]=$value[0];
+                $errData['message']=$value[0];
             return response()->json(['error',$errData], 401);            
+            }
         }
 		$input = $request->all(); 
 		$user = User::create($input); 
@@ -54,8 +55,8 @@ class UserController extends Controller
 // VALIDATE OTP
 	public function validateLogin(Request $request) {
 		$validator = Validator::make($request->all(), [ 
-            'mobile' => 'required|min:10|max:10', 
             'otp' => 'required', 
+            'mobile' => 'required|min:10|max:10', 
         ]);
 		if ($validator->fails()) { 
             foreach ($validator->errors()->toArray() as $value) {
