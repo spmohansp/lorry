@@ -81,14 +81,14 @@ class UserController extends Controller
 				verifyOtp::where('mobile',request('mobile'))->latest()->first()->delete();
 				return response()->json($success, $this-> successStatus);
 			}else{
-				$success['status']='error';
+				$success['status']='success';
 				$success['message']="User Not Register Yet";
 				$success['mobile']=request('mobile');
 				verifyOtp::where('mobile',request('mobile'))->latest()->first()->delete();
 				return response()->json($success, $this-> successStatus); 
 			}
 		}else{
-			$error['status']='success';
+			$error['status']='error';
 			$error['message']='Enter Valid OTP';
 			return response()->json($error); 
 		}
