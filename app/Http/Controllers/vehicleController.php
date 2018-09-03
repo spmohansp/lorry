@@ -20,7 +20,11 @@ class vehicleController extends Controller
             'documents' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['status']='error';
+                $errData['message']=$value[0];
+                return response()->json($errData);            
+            }
         }
        	$data=$request->all();
        	// return $request->documents;
@@ -28,20 +32,27 @@ class vehicleController extends Controller
         $user = Auth::user(); 
         $data['userId']=$user['id'];
         vehicle::create($data);
-    	return response()->json(['success','Vehicle Added Sucessfully'], $this-> successStatus); 
+        $success['status']='success';
+        $success['message']='Vehicle Created Successfully';
+        return response()->json($success); 
+    	return response()->json($success, $this-> successStatus); 
     }
 
 // VIEW ALL VEHICLE DETAILS
     public function getVehicle(Request $request){
-    	$user = Auth::user(); 
-    	return  vehicle::select("id","modelNumber","vehicleNumber","ownerName","documents")->where('userId',$user['id'])->get();
+    	$user = Auth::user();
+        $success['status']='success'; 
+    	$success['vehicles']=vehicle::select("id","modelNumber","vehicleNumber","ownerName","documents")->where('userId',$user['id'])->get();
+        return response()->json($success);
     }
 
 
 // VIEW INDIVIDUAL VEHICLE
     public function editVehicle(vehicle $id){
     	vehicle::findOrfail($id);
-    	return response()->json(['success',$id], $this-> successStatus); 
+    	$success['status']='success';
+        $success['vehicle']=$id;
+        return response()->json($success); 
     }
 
 // UPDATE VEHICLE
@@ -53,7 +64,11 @@ class vehicleController extends Controller
             'documents' => 'required', 
         ]);
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['status']='error';
+                $errData['message']=$value[0];
+                return response()->json($errData);            
+            }
         }
         $data = vehicle::findOrfail($id);
         $data ->modelNumber =  request('modelNumber');
@@ -61,9 +76,13 @@ class vehicleController extends Controller
         $data ->ownerName =  request('ownerName');
         $data ->documents =  serialize(request('documents'));
         if ($data->save()) {
-            return response()->json(['success','Vehicle Updated Sucessfully'], $this-> successStatus); 
+            $success['status']='success';
+            $success['message']='Vehicle Updated Sucessfully';
+            return response()->json($success); 
         }else{
-            return response()->json(['error'], $this-> successStatus); 
+            $success['status']='error';
+            $success['message']='Error on update';
+            return response()->json($errDatas); 
         }
 	}
 
@@ -71,9 +90,13 @@ class vehicleController extends Controller
     public function deleteVehicle($id){
     	vehicle::findOrfail($id);
     	if (vehicle::where('id', $id)->delete()) {
-    		return response()->json(['success','Vehicle Deleted Sucessfully'], $this-> successStatus); 
-    	}else{
-    		return response()->json(['error'], $this-> successStatus); 
-    	}
+    		$success['status']='success';
+            $success['message']='Vehicle Deleted Sucessfully';
+            return response()->json($success); 
+        }else{
+            $success['status']='error';
+            $success['message']='Error on Delete';
+            return response()->json($errDatas);  
+        }
     }
 }

@@ -25,7 +25,7 @@ class clientController extends Controller
                 return response()->json($errData);            
             }
         }
-        // CHECK CLIENT MOBILE ALREADY EXITS
+        // CHECK CLIENT MOBILE ALREADY EXITS OR NOT
         $clientData=client::where([['userId',$user['id']],['mobile',$request->mobile]])->first();
         if(!empty($clientData->mobile)){
             $errData['status']='error';

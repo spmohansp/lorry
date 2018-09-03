@@ -10,7 +10,7 @@ class staffController extends Controller{
 	public $successStatus = 200;
 
 // ADD STAFFS
-    public function addStaff(Request $request){
+    public function addStaff(Request $request){      
     	$validator = Validator::make($request->all(), [ 
             'name' => 'required', 
             'mobile1' => 'required|min:10|max:10', 
@@ -20,25 +20,42 @@ class staffController extends Controller{
             'licenceNumber' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['status']='error';
+                $errData['message']=$value[0];
+                return response()->json($errData);            
+            }
+        }
+        // CHECK STAFF MOBILE ALREADY EXITS OR NOT
+        $user = Auth::user(); 
+        $staffData=staff::where([['userId',$user['id']],['mobile1',$request->mobile1]])->first();
+        if(!empty($staffData->mobile1)){
+            $errData['status']='error';
+            $errData['message']='Staff Already Added';
+            return response()->json($errData); 
         }
         $data=$request->all();
-        $user = Auth::user(); 
         $data['userId']=$user['id'];
     	staff::create($data);
-    	return response()->json(['success','Staff Added Sucessfully'], $this-> successStatus); 
+    	$success['status']='success';
+        $success['message']='Staff Created Successfully';
+        return response()->json($success); 
     }
 
 // VIEW ALL STAFFS
     public function getStaff(Request $request){
     	$user = Auth::user(); 
-    	return  staff::select('id','name','mobile1','mobile2','address','type','licenceNumber')->where('userId',$user['id'])->get();
+        $success['status']='success';
+        $success['staffs']=staff::select('id','name','mobile1','mobile2','address','type','licenceNumber')->where('userId',$user['id'])->get();
+        return response()->json($success);
     }
 
 // VIEW INDIVIDUAL STAFF
     public function editStaff(staff $id){
     	staff::findOrfail($id);
-    	return response()->json(['success',$id], $this-> successStatus); 
+        $success['status']='success';
+        $success['staff']=$id;
+        return response()->json($success); 
     }
 
 // UPDATE STAFF
@@ -52,7 +69,11 @@ class staffController extends Controller{
             'licenceNumber' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['status']='error';
+                $errData['message']=$value[0];
+                return response()->json($errData);            
+            }
         }
      	$data = staff::findOrfail($id);
         $data ->name =  request('name');
@@ -61,11 +82,14 @@ class staffController extends Controller{
         $data ->address =  request('address');
         $data ->type =  request('type');
         $data ->licenceNumber =  request('licenceNumber');
-
     	if ($data->save()) {
-    		return response()->json(['success','Staff Updated Sucessfully'], $this-> successStatus); 
+    		$success['status']='success';
+            $success['message']='Staff Updated Sucessfully';
+            return response()->json($success); 
     	}else{
-    		return response()->json(['error'], $this-> successStatus); 
+    		$success['status']='error';
+            $success['message']='Error on update';
+            return response()->json($errDatas); 
     	}
     }
 
@@ -73,9 +97,13 @@ class staffController extends Controller{
     public function deleteStaff($id){
     	staff::findOrfail($id);
     	if (staff::where('id', $id)->delete()) {
-    		return response()->json(['success','Staff Deleted Sucessfully'], $this-> successStatus); 
+    		$success['status']='success';
+            $success['message']='Staff Deleted Sucessfully';
+            return response()->json($success); 
     	}else{
-    		return response()->json(['error'], $this-> successStatus); 
+    		$success['status']='error';
+            $success['message']='Error on Delete';
+            return response()->json($errDatas);  
     	}
     }
 }
