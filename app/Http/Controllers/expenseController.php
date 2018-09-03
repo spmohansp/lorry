@@ -17,9 +17,10 @@ class expenseController extends Controller
 //  PASS EXPENSE DATA
     public function expensePassData(Request $request){
     	$user = Auth::user(); 
+        $finalData['status']='success';
     	$finalData['vehicles'] = vehicle::select("id","modelNumber","vehicleNumber")->where('userId',$user['id'])->get();
     	$finalData['staffs'] = staff::select('id','name','type')->where('userId',$user['id'])->get();
-    	return response()->json(['success',$finalData], $this-> successStatus);
+    	return response()->json($finalData);
     }
 
 
@@ -34,25 +35,36 @@ class expenseController extends Controller
             'amount' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['status']='error';
+                $errData['message']=$value[0];
+                return response()->json($errData);            
+            }
         }
         $data= $request->all();
         $user = Auth::user(); 
         $data['userId']=$user['id'];
     	expense::create($data);
-    	return response()->json(['success','Expense Added Sucessfully'], $this-> successStatus); 
+    	$success['status']='success';
+        $success['message']='Expense Added Successfully';
+        return response()->json($success);  
     }
 
 
 // GET ALL EXPENSE
     public function getExpense(Request $request){
     	$user = Auth::user(); 
-    	return  expense::where('userId',$user['id'])->get();
+        $success['status']='success';
+    	$success['expenses']=expense::select('id','date','expenseType','vehicleId','quantity','staffId','amount','discription')->where('userId',$user['id'])->get();
+        return response()->json($success);
     }
 
 // GET 1 EXPENSE DATA
     public function editExpense(expense $id){
-        return response()->json(['success',$id], $this-> successStatus); 
+        expense::findOrfail($id);
+        $success['status']='success';
+        $success['staff']=$id;
+        return response()->json($success); 
         
     }
 
@@ -67,7 +79,11 @@ class expenseController extends Controller
             'amount' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['status']='error';
+                $errData['message']=$value[0];
+                return response()->json($errData);            
+            }
         }
     	 $data = expense::findOrfail($id);
     	 $data ->date =  request('date');
@@ -78,19 +94,27 @@ class expenseController extends Controller
     	 $data ->amount =  request('amount');
     	 $data ->discription =  request('discription');
     	if ($data->save()) {
-    		return response()->json(['success','Expense Updated Sucessfully'], $this-> successStatus); 
-    	}else{
-    		return response()->json(['error'], $this-> successStatus); 
-    	}
+    		$success['status']='success';
+            $success['message']='Expense Updated Sucessfully';
+            return response()->json($success); 
+        }else{
+            $success['status']='error';
+            $success['message']='Error on update';
+            return response()->json($errDatas); 
+        }
     }
 
 // DELETE EXPENSE DATA
     public function deleteExpense($id){
     	expense::findOrfail($id);
     	if (expense::where('id', $id)->delete()) {
-    		return response()->json(['success','Expense Deleted Sucessfully'], $this-> successStatus); 
-    	}else{
-    		return response()->json(['error'], $this-> successStatus); 
-    	}
+    		$success['status']='success';
+            $success['message']='Expense Deleted Sucessfully';
+            return response()->json($success); 
+        }else{
+            $success['status']='error';
+            $success['message']='Error on Delete';
+            return response()->json($errDatas);  
+        }
     }
 }

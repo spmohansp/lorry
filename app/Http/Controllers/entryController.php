@@ -21,6 +21,7 @@ class entryController extends Controller
          $loadType=array();
 	 // Location 
     	$entryTable = entry::select('locationFrom as location','locationTo','loadType')->where('userId',$user['id'])->get();
+        $finalData['status']='success';
         if (!empty($entryTable)) {
         	foreach ($entryTable as $key => $value) {
         		$locationData[]=$value['location'];
@@ -37,7 +38,7 @@ class entryController extends Controller
     	}
     	$finalData['vehicles'] = vehicle::select("id","modelNumber","vehicleNumber")->where('userId',$user['id'])->get();
     	$finalData['clients'] = client::select('id','name')->where('userId',$user['id'])->get();
-    	return response()->json(['success',$finalData], $this-> successStatus);
+    	return response()->json($finalData, $this-> successStatus);
     }
 
 // ADD ENTRY
@@ -59,24 +60,35 @@ class entryController extends Controller
             'balance' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error',$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['status']='error';
+                $errData['message']=$value[0];
+                return response()->json($errData);            
+            }
         }
         $data=$request->all();
         $user = Auth::user(); 
         $data['userId']=$user['id'];
         entry::create($data);
-    	return response()->json(['success','Entry Added Sucessfully'], $this-> successStatus); 
+    	$success['status']='success';
+        $success['message']='Entry Added Successfully';
+        return response()->json($success);  
     }
 
 // VIEW ALL ENTRY
     public function getEntry(Request $request){
     	$user = Auth::user(); 
-    	return  entry::where('userId',$user['id'])->get();
+        $success['status']='success';
+    	$success['entries']=  entry::where('userId',$user['id'])->get();
+        return response()->json($success);
     }
 
 // EDIT ENTRY 
     public function editEntry(entry $id){
-        return response()->json(['success',$id], $this-> successStatus); 
+        entry::findOrfail($id);
+        $success['status']='success';
+        $success['staff']=$id;
+        return response()->json($success); 
     }
 
 // UPDATE ENTRY
@@ -98,7 +110,11 @@ class entryController extends Controller
             'balance' => 'required', 
         ]);
 		if ($validator->fails()) { 
-            return response()->json(['error',$validator->errors()], 401);            
+            foreach ($validator->errors()->toArray() as $value) {
+                $errData['status']='error';
+                $errData['message']=$value[0];
+                return response()->json($errData);            
+            }
         }
         $data = entry::findOrfail($id);
         $data ->dateFrom =  request('dateFrom');
@@ -122,9 +138,13 @@ class entryController extends Controller
         $data ->advance =  request('advance');
         $data ->balance =  request('balance');
         if ($data->save()) {
-    		return response()->json(['success','Entry Updated Sucessfully'], $this-> successStatus); 
+    		$success['status']='success';
+            $success['message']='Vehicle Updated Sucessfully';
+            return response()->json($success); 
     	}else{
-    		return response()->json(['error'], $this-> successStatus); 
+    		$success['status']='error';
+            $success['message']='Error on update';
+            return response()->json($errDatas); 
     	}
     }
 
@@ -132,9 +152,13 @@ class entryController extends Controller
     public function deleteEntry($id){
     	entry::findOrfail($id);
     	if (entry::where('id', $id)->delete()) {
-    		return response()->json(['success','Entry Deleted Sucessfully'], $this-> successStatus); 
-    	}else{
-    		return response()->json(['error'], $this-> successStatus); 
-    	}
+    		$success['status']='success';
+            $success['message']='Entry Deleted Sucessfully';
+            return response()->json($success); 
+        }else{
+            $success['status']='error';
+            $success['message']='Error on Delete';
+            return response()->json($errDatas);  
+        }
     }
 }
