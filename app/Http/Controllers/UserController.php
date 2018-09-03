@@ -81,7 +81,7 @@ class UserController extends Controller
 				verifyOtp::where('mobile',request('mobile'))->latest()->first()->delete();
 				return response()->json($success, $this-> successStatus);
 			}else{
-				$success['status']='success';
+				$success['status']='error';
 				$success['message']="User Not Register Yet";
 				$success['mobile']=request('mobile');
 				verifyOtp::where('mobile',request('mobile'))->latest()->first()->delete();
