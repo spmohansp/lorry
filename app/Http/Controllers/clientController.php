@@ -80,24 +80,25 @@ class clientController extends Controller
             $success['message']='Client Updated Sucessfully';
     		return response()->json($success); 
     	}else{
-             $success['status']='error';
-             $success['message']='Error on update';
+             $errDatas['status']='error';
+             $errDatas['message']='Error on update';
     		return response()->json($errDatas); 
     	}
     }
 
 // DELETE CLIENT DETAIL
     public function deleteClient($id){
-    	client::findOrfail($id);
-    	if (client::where('id', $id)->delete()) {
+    	// client::findOrfail($id);
+        if (client::where('id', $id)->delete()) {
     		$success['status']='success';
             $success['message']='Client Deleted Sucessfully';
             return response()->json($success); 
     	}else{
-    		$success['status']='error';
-            $success['message']='Error on Delete';
+    		$errDatas['status']='error';
+            $errDatas['message']='Error on Delete';
             return response()->json($errDatas); 
     	}
     }
+    
 
 }
